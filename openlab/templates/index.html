@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>OpenLab mini</title>
+</head>
+<body>
+  <h1>OpenLab mini</h1>
+  <a href="/new">＋ 新規投稿</a>
+  <h2>カテゴリ</h2>
+  <ul>
+    {% for cat in categories %}
+      <li><a href="{{ url_for('category', name=cat[0]) }}">{{ cat[0] }}</a></li>
+    {% endfor %}
+  </ul>
+  <h2>最近の投稿</h2>
+  <ul>
+    {% for post in posts %}
+      <li>
+        <a href="{{ url_for('post', id=post.id) }}">{{ post.title }}</a>
+        （{{ post.category }}） - {{ post.date.strftime("%Y-%m-%d %H:%M") }}
+      </li>
+    {% endfor %}
+  </ul>
+</body>
+</html>
