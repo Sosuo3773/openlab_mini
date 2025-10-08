@@ -1,10 +1,30 @@
+import os
 from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///openlab.db'
+
+# === DB接続設定（Postgres/SQLite両対応） ===
+db_url = os.environ.get("DATABASE_URL", "sqlite:///openlab.db")
+
+# RenderのURLは 'postgres://' 形式のことがあるので、SQLAlchemy用に置換
+if db_url.startswith("postgres://"):
+    db_url = db_url.replace("postgres://", "postgresql+psycopg://", 1)
+elif db_url.startswith("postgresql://"):
+    # 明示的にpsycopgドライバ指定（任意）
+    db_url = db_url.replace("postgresql://", "postgresql+psycopg://", 1)
+
+# sslmodeが無い場合の保険（通常はExternal URLに付いてる）
+if "postgresql+psycopg://" in db_url and "sslmode=" not in db_url:
+    sep = "&" if "?" in db_url else "?"
+    db_url = f"{db_url}{sep}sslmode=require"
+
+app.config['SQLALCHEMY_DATABASE_URI'] = db_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+# 接続の生存確認（再接続）を有効化して安定化
+app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {"pool_pre_ping": True}
+
 db = SQLAlchemy(app)
 
 # 投稿モデル
