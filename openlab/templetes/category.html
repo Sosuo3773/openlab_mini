@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}{{ category }} | OpenLab mini{% endblock %}
+{% block content %}
+<h4 class="mb-3">カテゴリ：{{ category }}</h4>
+{% for post in posts %}
+  <div class="card mb-3">
+    <div class="card-body">
+      <a class="text-decoration-none" href="{{ url_for('post', id=post.id) }}">
+        <h5 class="card-title text-white">{{ post.title }}</h5>
+      </a>
+      <small class="text-muted-2">{{ post.date.strftime("%Y-%m-%d %H:%M") }}</small>
+      <p class="card-text mt-2 text-muted-2">{{ post.content[:180] }}{% if post.content|length>180 %}…{% endif %}</p>
+    </div>
+  </div>
+{% else %}
+  <p class="text-muted-2">このカテゴリにはまだ投稿がありません。</p>
+{% endfor %}
+{% endblock %}

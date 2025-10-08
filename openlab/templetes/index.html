@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}OpenLab mini - トップ{% endblock %}
+{% block content %}
+<div class="row g-4">
+  <div class="col-12 col-lg-3">
+    <div class="card p-3">
+      <h5 class="mb-3">カテゴリ</h5>
+      <div class="list-group">
+        {% for cat in categories %}
+          <a class="list-group-item list-group-item-action"
+             href="{{ url_for('category', name=cat[0]) }}">{{ cat[0] }}</a>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  <div class="col-12 col-lg-9">
+    <h4 class="mb-3">最近の投稿</h4>
+    {% for post in posts %}
+      <div class="card mb-3">
+        <div class="card-body">
+          <a class="text-decoration-none" href="{{ url_for('post', id=post.id) }}">
+            <h5 class="card-title text-white">{{ post.title }}</h5>
+          </a>
+          <span class="badge badge-cat">{{ post.category }}</span>
+          <small class="text-muted-2 ms-2">{{ post.date.strftime("%Y-%m-%d %H:%M") }}</small>
+          <p class="card-text mt-2 text-muted-2">{{ post.content[:140] }}{% if post.content|length>140 %}…{% endif %}</p>
+          <a href="{{ url_for('post', id=post.id) }}" class="btn btn-sm btn-outline-info">読む</a>
+        </div>
+      </div>
+    {% else %}
+      <p class="text-muted-2">まだ投稿がありません。</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

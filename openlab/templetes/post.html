@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}{{ post.title }} | OpenLab mini{% endblock %}
+{% block content %}
+<div class="mb-4">
+  <h3 class="mb-1">{{ post.title }}</h3>
+  <span class="badge badge-cat">{{ post.category }}</span>
+  <small class="text-muted-2 ms-2">{{ post.date.strftime("%Y-%m-%d %H:%M") }}</small>
+  <div class="card mt-3"><div class="card-body text-muted-2">{{ post.content|replace('\n','<br>')|safe }}</div></div>
+</div>
+
+<h5 class="mb-3">コメント</h5>
+
+{% for c in comments %}
+  {% if not c.parent_id %}
+  <div class="card mb-3">
+    <div class="card-body">
+      <div class="mb-2 text-muted-2"><small>{{ c.date.strftime("%Y-%m-%d %H:%M") }}</small></div>
+      <div class="mb-2">{{ c.content|replace('\n','<br>')|safe }}</div>
+      <form method="POST" class="d-flex gap-2">
+        <input type="hidden" name="parent_id" value="{{ c.id }}">
+        <input name="content" class="form-control" placeholder="返信を書く">
+        <button class="btn btn-info" type="submit">返信</button>
+      </form>
+      {% for r in comments %}
+        {% if r.parent_id == c.id %}
+        <div class="reply-bar mt-3">
+          <div class="text-muted-2"><small>{{ r.date.strftime("%Y-%m-%d %H:%M") }}</small></div>
+          <div>{{ r.content|replace('\n','<br>')|safe }}</div>
+        </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+{% else %}
+  <p class="text-muted-2">まだコメントはありません。</p>
+{% endfor %}
+
+<hr class="border-secondary">
+<h5 class="mt-4">新しいコメント</h5>
+<form method="POST" class="mt-2">
+  <textarea name="content" rows="3" class="form-control" placeholder="内容"></textarea>
+  <button class="btn btn-info mt-2">送信</button>
+</form>
+
+<a class="btn btn-outline-light mt-4" href="{{ url_for('index') }}">← トップへ</a>
+{% endblock %}
